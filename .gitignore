@@ -4,3 +4,4 @@ __pycache__/
 /logs/*
 /redis
 node_modules/
+dockercommands.txt
