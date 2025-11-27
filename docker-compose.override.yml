@@ -1,0 +1,12 @@
+services:
+  app:
+    restart: always
+    volumes:
+      - ./app:/app          # live source
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  worker:
+    restart: always
+    volumes:
+      - ./app:/app
+    command: ["bash", "-c", "while true; do python worker.py; echo 'Worker crashed, restarting...'; sleep 1; done"]

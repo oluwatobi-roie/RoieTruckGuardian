@@ -1,0 +1,90 @@
+docker-compose up --build -docker
+docker-compose logs -f app
+docker-compose down
+
+
+docker compose exec postgres psql -U roie_user -d roie_ai_cryslad2 -c "\dt"
+
+for development
+docker compose -f docker-compose.yml -f docker-compose.override.yml up
+
+
+For Production
+docker compose -f docker-compose.yml build
+docker compose -f docker-compose.yml up
+
+
+
+
+Testing
+Redis Receigving data:
+# stream should grow every few seconds
+docker exec -it cryslad_v3-redis-1 redis-cli XLEN traccar
+
+worker is draining the system:
+docker compose logs -f worker | grep -E "(processed|device)"
+
+
+Position landing inside postgres:
+docker compose exec postgres psql -U roie_user -d roie_ai_cryslad2 \
+  -c "SELECT count(*) FROM positions WHERE server_time > now() - interval '1 minute';"
+
+
+docker compose exec postgres psql -U roie_user -d roie_ai_cryslad2 \
+  -c "SELECT device_id, name FROM trucks ORDER BY device_id;"
+
+
+
+modifying tabes:
+docker compose exec postgres \
+  psql -U roie_user -d roie_ai_cryslad2 \
+  -c "ALTER TABLE violations ADD COLUMN IF NOT EXISTS is_offline_violation BOOLEAN NOT NULL DEFAULT FALSE;
+      ALTER TABLE violations ADD COLUMN IF NOT EXISTS maintenance_mode BOOLEAN NOT NULL DEFAULT FALSE;"
+
+
+
+docker exec -it worker bash
+docker exec -it cryslad_v3-worker-1 bash
+
+
+
+
+
+payload:
+    { "position": 
+        { "id": 0, 
+            "attributes": 
+                { "type": 18, 
+                    "sat": 15, 
+                    "ip": "102.90.103.222", 
+                    "distance": 51.2723994256242, 
+                    "totalDistance": 5676185.946042675, 
+                    "motion": true, 
+                    "ignition": true, 
+                    "batteryLevel": 14, 
+                    "hours": 665453810 
+                    }, 
+                    
+            "deviceId": 2042, 
+            "protocol": "gt06", 
+            "serverTime": "2025-10-25T13:13:46.134+00:00", 
+            "deviceTime": "2025-10-25T13:13:35.000+00:00", 
+            "fixTime": "2025-10-25T13:13:35.000+00:00", 
+            "valid": true, 
+            "latitude": 6.572696111111111, 
+            "longitude": 3.364807777777778, 
+            "altitude": 0.0, 
+            "speed": 24.838022000000002, 
+            "course": 108.0, 
+            "address": "Mobolaji Bank-Anthony Way, Onigbongbo, Ikeja, Lagos, 100211, Nigeria", 
+            "accuracy": 0.0, 
+            "network": 
+                { "radioType": "gsm",
+                     "considerIp": false, 
+                     "cellTowers": [ { "cellId": 0, "locationAreaCode": 0, "mobileCountryCode": 0, "mobileNetworkCode": 0 } ] }, 
+            "geofenceIds": null }, 
+    "device": { 
+            "id": 2042, 
+            "attributes": {}, 
+            "groupId": 26, 
+            "calendarId": 0, "name": "AKD 189 QN", "uniqueId": "868720062216423", "status": "online", "lastUpdate": "2025-10-25T13:13:46.993+00:00", "positionId": 651487231, "phone": "09164602202", "model": "", "contact": "Everything Logistics", "category": "motorcycle", "disabled": false, "expirationTime": null } }
