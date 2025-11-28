@@ -51,7 +51,8 @@ class Violation(Base):
     resolved_by           = Column(Text)
     resolved_at           = Column(DateTime(timezone=True))
     is_offline_violation = Column(Boolean, default=False)  # True if violation triggered by offline
-    maintenance_mode     = Column(Boolean, default=False)  # resolver can tick “Under maintenance”
+    maintenance_mode     = Column(Boolean, default=False) # resolver can tick “Under maintenance”
+    active =  Column(Boolean, default=False) 
 
 
 class RecognisedZone(Base):

@@ -59,7 +59,8 @@ CREATE TABLE IF NOT EXISTS violations (
     resolved_by TEXT,
     resolved_at TIMESTAMPTZ,
     is_offline_violation BOOLEAN NOT NULL DEFAULT FALSE,
-    maintenance_mode BOOLEAN NOT NULL DEFAULT FALSE
+    maintenance_mode BOOLEAN NOT NULL DEFAULT FALSE,
+    active BOOLEAN NOT NULL DEFAULT False
 
 );
 
