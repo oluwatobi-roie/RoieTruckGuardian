@@ -93,7 +93,8 @@ async def save_to_db(db, payload: dict) -> None:
             motion=p.get("attributes", {}).get("motion"),
             fix_time=to_dt(p["fixTime"]),
             server_time=to_dt(p["serverTime"]),
-            address=p.get("address")
+            address=p.get("address"),
+            odometer = p.get("attributes", {}).get("totalDistance")
         )
 
         db.add(pos)
