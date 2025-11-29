@@ -44,6 +44,18 @@ CREATE TABLE IF NOT EXISTS trips (
     distance_m  DOUBLE PRECISION DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS stops (
+    id BIGSERIAL PRIMARY KEY,
+    device_id BIGINT NOT NULL,
+    stop_time TIMESTAMPTZ NOT NULL,
+    resume_time TIMESTAMPTZ,
+    start_zone TEXT,
+    stop_addr TEXT,
+    zone TEXT,
+    duration_s INTEGER
+);
+
+
 
 CREATE TABLE IF NOT EXISTS violations (
     id          BIGSERIAL PRIMARY KEY,
@@ -64,18 +76,22 @@ CREATE TABLE IF NOT EXISTS violations (
 
 );
 
-
---  Spatial index
-CREATE INDEX idx_positions_latlon ON positions USING GIST (ST_MakePoint(lon, lat));
-CREATE INDEX idx_zones_geom ON recognised_zones USING GIST (geom);
-
-
 CREATE TABLE IF NOT EXISTS device_status (
     device_id     BIGINT PRIMARY KEY,
     online        BOOLEAN DEFAULT TRUE,
     last_seen     TIMESTAMPTZ,
     offline_since TIMESTAMPTZ
 );
+
+--  Spatial index
+CREATE INDEX idx_positions_latlon ON positions USING GIST (ST_MakePoint(lon, lat));
+CREATE INDEX idx_zones_geom ON recognised_zones USING GIST (geom);
+CREATE INDEX IF NOT EXISTS idx_stops_device_id ON stops (device_id);
+CREATE INDEX IF NOT EXISTS idx_stops_stop_time ON stops (stop_time);
+CREATE INDEX IF NOT EXISTS idx_trips_device_id ON trips (device_id);
+CREATE INDEX IF NOT EXISTS idx_trips_start_time ON trips (start_time);
+
+
 
 
 -- INSERT INTO recognised_zones (name,category,geom) VALUES
