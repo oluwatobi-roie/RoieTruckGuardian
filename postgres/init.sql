@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS device_status (
 );
 
 
-INSERT INTO recognised_zones (name,category,geom) VALUES
-('Apapa Customer A','CUSTOMER', ST_GeogFromText('POLYGON((3.3 6.45, 3.31 6.45, 3.31 6.46, 3.3 6.46, 3.3 6.45))')),
-('Ikeja Resting','RESTING',  ST_GeogFromText('POLYGON((3.35 6.56, 3.36 6.56, 3.36 6.57, 3.35 6.57, 3.35 6.56))'));
--- Sample zones (Lagos). Replace with real polygons. INSERT INTO recognised_zones (name,category,geom) VALUES ('Apapa Customer A','CUSTOMER', ST_GeogFromText('POLYGON((3.3 6.45, 3.31 6.45, 3.31 6.46, 3.3 6.46, 3.3 6.45))')), ('Ikeja Resting','RESTING', ST_GeogFromText('POLYGON((3.35 6.56, 3.36 6.56, 3.36 6.57, 3.35 6.57, 3.35 6.56))'));
+-- INSERT INTO recognised_zones (name,category,geom) VALUES
+-- ('Apapa Customer A','CUSTOMER', ST_GeogFromText('POLYGON((3.3 6.45, 3.31 6.45, 3.31 6.46, 3.3 6.46, 3.3 6.45))')),
+-- ('Ikeja Resting','RESTING',  ST_GeogFromText('POLYGON((3.35 6.56, 3.36 6.56, 3.36 6.57, 3.35 6.57, 3.35 6.56))'));
+-- -- Sample zones (Lagos). Replace with real polygons. INSERT INTO recognised_zones (name,category,geom) VALUES ('Apapa Customer A','CUSTOMER', ST_GeogFromText('POLYGON((3.3 6.45, 3.31 6.45, 3.31 6.46, 3.3 6.46, 3.3 6.45))')), ('Ikeja Resting','RESTING', ST_GeogFromText('POLYGON((3.35 6.56, 3.36 6.56, 3.36 6.57, 3.35 6.57, 3.35 6.56))'));
