@@ -23,18 +23,24 @@ class Position(Base):
     fix_time    = Column(DateTime(timezone=True), nullable=False)
     server_time = Column(DateTime(timezone=True), nullable=False)
     address     = Column(Text)
+    odometer    = Column(Numeric)
 
 class Trip(Base):
     __tablename__ = "trips"
-    id         = Column(BigInteger, primary_key=True, index=True)
-    device_id  = Column(BigInteger, index=True, nullable=False)
-    start_time = Column(DateTime(timezone=True), nullable=False)
-    end_time   = Column(DateTime(timezone=True))
-    start_zone = Column(Text)
-    end_zone   = Column(Text)
-    start_addr = Column(Text)
-    end_addr   = Column(Text)
-    distance_m = Column(Numeric, default=0)
+    id            = Column(BigInteger, primary_key=True, index=True)
+    device_id     = Column(BigInteger, index=True, nullable=False)
+    start_time    = Column(DateTime(timezone=True), nullable=False)
+    end_time      = Column(DateTime(timezone=True))
+    start_zone    = Column(Text)
+    end_zone      = Column(Text)
+    start_addr    = Column(Text)
+    end_addr      = Column(Text)
+    start_odometer = Column(Numeric)
+    end_odometer   = Column(Numeric)
+    max_speed      = Column(Numeric)          # Maximum speed during the trip
+    average_speed  = Column(Numeric)          # Average speed (computed at end)
+    distance_m     = Column(Numeric, default=0)  # end - start odometer
+    trip_duration  = Column(Numeric)             # seconds (computed at end)
 
 class Stop(Base):
     __tablename__ = "stops"
