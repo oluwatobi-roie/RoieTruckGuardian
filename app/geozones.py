@@ -13,5 +13,5 @@ async def zone_at(db: AsyncSession, lat: float, lon: float):
         """).bindparams(lon=lon, lat=lat)
     )
     
-    z = row.fetchone()
+    z = result.mappings().fetchone()
     return z["name"] if z else None
