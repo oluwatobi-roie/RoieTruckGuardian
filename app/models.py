@@ -36,6 +36,19 @@ class Trip(Base):
     end_addr   = Column(Text)
     distance_m = Column(Numeric, default=0)
 
+class Stop(Base):
+    __tablename__ = "stops"
+
+    id          = Column(BigInteger, primary_key=True, index=True)
+    device_id   = Column(BigInteger, index=True, nullable=False)
+    stop_time   = Column(DateTime(timezone=True), nullable=False)
+    start_zone  = Column(Text)
+    stop_addr   = Column(Text)
+    resume_time = Column(DateTime(timezone=True))
+    zone        = Column(Text)
+    duration_s  = Column(Integer)  # computed after resume
+    
+
 class Violation(Base):
     __tablename__ = "violations"
     id                    = Column(BigInteger, primary_key=True, index=True)
