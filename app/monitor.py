@@ -2,7 +2,7 @@
 import datetime as dt
 from typing import List, Optional
 
-from sqlalchemy import select, update
+from sqlalchemy import select, update, func
 from sqlalchemy.orm import selectinload
 
 from database import AsyncSessionLocal
@@ -147,7 +147,9 @@ async def _start_trip(db, device_id: int, start_pos: Position, start_zone: Optio
     return trip
 
 
+
 async def _end_trip(db, device_id: int, end_pos: Position) -> Optional[Trip]:
+    # ---- 1. Get current open trip -------------------------------------
     q = await db.execute(
         select(Trip)
         .where(Trip.device_id == device_id, Trip.end_time.is_(None))
@@ -158,11 +160,54 @@ async def _end_trip(db, device_id: int, end_pos: Position) -> Optional[Trip]:
     if not trip:
         return None
 
+    # ---- 2. Lookup zone at trip end -----------------------------------
+    end_zone = await zone_at(db, end_pos.lat, end_pos.lon)
+
+    # ---- 3. Update trip end fields ------------------------------------
     trip.end_time = end_pos.server_time
     trip.end_addr = end_pos.address
-    # Optionally compute distance_m here by aggregating positions between trip.start_time and trip.end_time
+    trip.end_zone = end_zone
+
+    # ---- 4. Save end odometer -----------------------------------------
+    trip.end_odometer = end_pos.odometer
+
+    # ---- 5. Compute distance (meters) ---------------------------------
+    if trip.start_odometer is not None and end_pos.odometer is not None:
+        distance = float(end_pos.odometer) - float(trip.start_odometer)
+        trip.distance_m = max(distance, 0)  # avoid negative due to GPS/device reset
+
+    # ---- Compute trip duration -------------------------------------
+    if trip.end_time and trip.start_time:
+        delta = trip.end_time - trip.start_time
+        trip.trip_duration = delta.total_seconds()
+
+    # ---- Compute speed stats from Position table --------------------
+    speed_query = await db.execute(
+        select(
+            func.max(Position.speed),
+            func.avg(Position.speed)
+        )
+        .where(
+            Position.device_id == device_id,
+            Position.server_time >= trip.start_time,
+            Position.server_time <= trip.end_time
+        )
+    )
+    max_speed, avg_speed = speed_query.one()
+
+    trip.max_speed = max_speed or 0
+    trip.average_speed = avg_speed or 0
+
+    # ---- 8. Save -------------------------------------------------------
     await db.commit()
-    logger.info(f"[trip] Ended trip id={trip.id} device={device_id} at {trip.end_time}")
+    await db.refresh(trip)
+
+    logger.info(
+        f"[trip] Ended trip id={trip.id} device={device_id} at {trip.end_time} "
+        f"distance={trip.distance_m}m duration={trip.trip_duration}s "
+        f"max_speed={trip.max_speed} avg_speed={trip.average_speed}"
+    )
+
     return trip
 
 
