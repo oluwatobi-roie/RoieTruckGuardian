@@ -11,6 +11,10 @@ from geozones import zone_at
 from alerts import send_alert
 
 from logging_config import get_logger
+
+# from utils.variable import *
+
+
 logger = get_logger("monitor", "monitor.log")
 
 UTC = dt.timezone.utc
@@ -134,7 +138,7 @@ async def _start_trip(db, device_id: int, start_pos: Position, start_zone: Optio
         start_time=start_pos.server_time,
         start_zone=start_zone,
         start_addr=start_pos.address,
-        distance_m=0
+        start_odometer=start_pos.odometer,
     )
     db.add(trip)
     await db.commit()
@@ -373,8 +377,10 @@ async def evaluator(device_id: int) -> None:
 
             # ------------------- ZONE LOOKUP --------------------
             latest_zone = await zone_at(db, latest.lat, latest.lon)
-            logger.info(f"[evaluator] Zone lookup device {device_id} / {truck_name} : {'IN zone' if latest_zone else 'OUTSIDE zone'}")
-
+            logger.info(
+                f"[evaluator] Zone lookup device {device_id} / {truck_name} : "
+                f"{'IN zone ' + latest_zone['name'] if latest_zone else 'OUTSIDE zone'}"
+            )
             # ------------------- TRIP START DETECTION --------------------
             if await _is_trip_start(positions):
                 # Check if there's an already-open trip for this device
@@ -387,8 +393,8 @@ async def evaluator(device_id: int) -> None:
 
                 if not open_trip:
                     # Start trip
-                    latest_zone_obj = await zone_at(db, latest.lat, latest.lon)
-                    await _start_trip(db, device_id, latest, start_zone=(latest_zone_obj.name if latest_zone_obj else None))
+                    latest_zone_name = await zone_at(db, latest.lat, latest.lon)
+                    await _start_trip(db, device_id, latest, start_zone=(latest_zone_name["name"] if latest_zone_name else None))
 
                     # Deactivate active violations ONLY IF movement is sustained (not GPS jitter)
                     sustained_movement = not await _is_stationary(positions)
@@ -471,6 +477,26 @@ async def evaluator(device_id: int) -> None:
     except Exception as e:
         logger.exception(f"[evaluator] ERROR evaluating device {device_id} / {truck_name} : {e}")
         raise
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # =====================================================================
