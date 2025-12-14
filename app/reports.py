@@ -86,5 +86,6 @@ async def generate_yesterday_trip_report(report_date=None):
                 "start_address": start_zone.name if start_zone else trip.start_addr or pos_list[0].address,
                 "end_address": end_zone.name if end_zone else trip.end_addr or pos_list[-1].address,
             })
+    print(report)
 
     return report

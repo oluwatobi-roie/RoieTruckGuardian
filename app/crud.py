@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, update
 from models import DeviceStatus
 import datetime as dt
+from logging_config import get_logger
 
 async def upsert_device_status(db: AsyncSession, device_id:int, online:bool, ts:dt.datetime):
     row = await db.get(DeviceStatus, device_id)
@@ -28,6 +29,9 @@ def to_dt(v):
     return None
 
 
+
+
+trip_debug_logger = get_logger("debug", "debug.log")
 def log_trip_debug( device_id: int, sampling_intervals: list[int] = None, last_positions: list = None, trip_end_triggered: bool = False, zone_suppression_info: str = None):
     """
     Log structured debugging information for trip start/end detection.

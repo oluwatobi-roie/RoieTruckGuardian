@@ -36,8 +36,8 @@ class Trip(Base):
     start_addr    = Column(Text)
     end_addr      = Column(Text)
     start_odometer = Column(Numeric)
-    end_odometer   = Column(Numeric)
-    max_speed      = Column(Numeric)          # Maximum speed during the trip
+    end_odometer   = Column(Numeric)        
+    max_speed      = Column(Numeric)    # Maximum speed during the trip
     average_speed  = Column(Numeric)          # Average speed (computed at end)
     distance_m     = Column(Numeric, default=0)  # end - start odometer
     trip_duration  = Column(Numeric)             # seconds (computed at end)
@@ -51,7 +51,7 @@ class Stop(Base):
     start_zone  = Column(Text)
     stop_addr   = Column(Text)
     resume_time = Column(DateTime(timezone=True))
-    zone        = Column(Text)
+    zone        = Column(Text) # this column should be deleted and code refactored.
     duration_s  = Column(Integer)  # computed after resume
     
 

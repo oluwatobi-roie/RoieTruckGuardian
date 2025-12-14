@@ -28,20 +28,29 @@ CREATE TABLE IF NOT EXISTS positions (
     motion      BOOLEAN,
     fix_time    TIMESTAMPTZ NOT NULL,
     server_time TIMESTAMPTZ NOT NULL,
-    address     TEXT
+    address     TEXT,
+    odometer    NUMERIC
 );
 
 
 CREATE TABLE IF NOT EXISTS trips (
-    id          BIGSERIAL PRIMARY KEY,
-    device_id   BIGINT NOT NULL,
-    start_time  TIMESTAMPTZ NOT NULL,
-    end_time    TIMESTAMPTZ,
-    start_zone  TEXT,
-    end_zone    TEXT,
-    start_addr  TEXT,
-    end_addr    TEXT,
-    distance_m  DOUBLE PRECISION DEFAULT 0
+    id              BIGSERIAL PRIMARY KEY,
+    device_id       BIGINT NOT NULL,   
+    start_time      TIMESTAMPTZ NOT NULL,
+    end_time        TIMESTAMPTZ,    
+    start_zone      TEXT,
+    end_zone        TEXT,   
+    start_addr      TEXT,
+    end_addr        TEXT,
+    -- Odometer readings
+    start_odometer  NUMERIC,
+    end_odometer    NUMERIC,
+    -- Speed metrics
+    max_speed       NUMERIC,
+    average_speed   NUMERIC,
+    -- Trip metrics
+    distance_m      NUMERIC DEFAULT 0,    -- changed from double precision
+    trip_duration   NUMERIC               -- seconds or minutes depending on your logic
 );
 
 CREATE TABLE IF NOT EXISTS stops (

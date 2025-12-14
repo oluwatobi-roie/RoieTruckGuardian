@@ -5,3 +5,4 @@ __pycache__/
 /redis
 node_modules/
 dockercommands.txt
+/reports/*
