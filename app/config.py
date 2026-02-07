@@ -14,3 +14,8 @@ SMTP_PASSWORD  = os.getenv("SMTP_PASSWORD")
 ALLOWED_DEVICES = {
     int(d) for d in os.getenv("ALLOWED_DEVICES", "").split(",") if d.isdigit()
 }
+ALERT_EMAILS = [
+    email.strip()
+    for email in os.getenv("ALERT_EMAILS", "").split(",")
+    if email.strip()
+]

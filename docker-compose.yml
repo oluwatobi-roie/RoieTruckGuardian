@@ -73,7 +73,7 @@ services:
         condition: service_started
       postgres-init:
         condition: service_completed_successfully
-    command: ["python", "-m", "worker"]
+    command: ["bash","-c","sleep 5 && python -m worker"]
     volumes:
     - ./logs:/logs
     - ./reports:/reports
